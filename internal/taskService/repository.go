@@ -29,6 +29,7 @@ func (r *taskRepository) GetAllTasks() ([]Task, error) {
 }
 
 func (r *taskRepository) UpdateTaskByID(id uint, task Task) (Task, error) {
+	task.ID = id
 	err := r.db.Model(&Task{}).Where("id = ?", id).Updates(task).Error
 	return task, err
 }
