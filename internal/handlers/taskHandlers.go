@@ -41,6 +41,7 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 	taskToCreate := taskService.Task{
 		Task:   *taskRequest.Task,
 		IsDone: *taskRequest.IsDone,
+		UserID: *taskRequest.UserId,
 	}
 
 	createdTask, err := h.Service.CreateTask(taskToCreate)
@@ -52,6 +53,7 @@ func (h *TaskHandler) PostTasks(_ context.Context, request tasks.PostTasksReques
 		Id:     &createdTask.ID,
 		Task:   &createdTask.Task,
 		IsDone: &createdTask.IsDone,
+		UserId: &createdTask.UserID,
 	}
 	return response, nil
 }
@@ -86,4 +88,27 @@ func (h *TaskHandler) DeleteTasksId(_ context.Context, request tasks.DeleteTasks
 		return nil, err
 	}
 	return tasks.DeleteTasksId204Response{}, nil
+}
+
+func (h *TaskHandler) GetTasksByUserID(ctx context.Context, request tasks.GetTasksByUserIDRequestObject) (tasks.GetTasksByUserIDResponseObject, error) {
+	userID := request.Id
+
+	tasksList, err := h.Service.GetTasksByUserID(uint(userID))
+	if err != nil {
+		return nil, err
+	}
+
+	var response tasks.GetTasksByUserID200JSONResponse
+
+	for _, t := range tasksList {
+		task := tasks.Task{
+			Id:     &t.ID,
+			Task:   &t.Task,
+			IsDone: &t.IsDone,
+			UserId: &t.UserID,
+		}
+		response = append(response, task)
+	}
+
+	return response, nil
 }

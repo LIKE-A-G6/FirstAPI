@@ -23,3 +23,9 @@ func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
 func (s *TaskService) DeleteTaskByID(id uint) error {
 	return s.repo.DeleteTaskByID(id)
 }
+
+func (s *TaskService) GetTasksByUserID(userID uint) ([]Task, error) {
+	var tasks []Task
+	err := s.repo.GetTasksByUserID(userID, &tasks)
+	return tasks, err
+}
